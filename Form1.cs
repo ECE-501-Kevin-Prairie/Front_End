@@ -12,6 +12,8 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
+using System.Media;
+using System.Runtime.InteropServices;
 
 
 
@@ -20,6 +22,9 @@ namespace ECE_501_Front_End
     public partial class Form1 : Form
     {
         private readonly BackgroundWorker worker;
+        [DllImport("winmm.dll", EntryPoint = "mciSendStringA", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
+        private static extern int mciSendString(string lpstrCommand, string lpstrReturnString, int uReturnLength, int hwndCallback);
+
         public Form1()
         {
             InitializeComponent();
@@ -32,6 +37,21 @@ namespace ECE_501_Front_End
             worker.RunWorkerCompleted += worker_RunWorkerCompleted;
             worker.WorkerSupportsCancellation = true;
 
+        }
+        public void localRecord()
+        {
+            mciSendString("open new Type waveaudio Alias recsound", "", 0, 0);
+            mciSendString("record recsound", "", 0, 0);
+            Console.WriteLine("Recording, press Enter to stop and save ...");
+            Console.ReadLine();
+
+            mciSendString("save recsound C:/result.wav", "", 0, 0);
+            mciSendString("close recsound ", "", 0, 0);
+        }
+        public void localPlay()
+        {
+            System.Media.SoundPlayer player = new System.Media.SoundPlayer("C:\\result.wav");
+            player.PlaySync();
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -67,10 +87,10 @@ namespace ECE_501_Front_End
         private void Clear_Click(object sender, EventArgs e)
         {
             outputBox.Text = "";
-            Device1.Checked = false;
-            Device2.Checked = false;
-            Device3.Checked = false;
-            Device4.Checked = false;
+            localLoop.Checked = false;
+            LED.Checked = false;
+            Buzzer.Checked = false;
+            Microphone.Checked = false;
             Command.Items.Clear();
             Command.Items.Add("Please Select a Device");
             Command.Text = "Please Select a Device";
@@ -83,38 +103,40 @@ namespace ECE_501_Front_End
         }
 
         // Changing the List of Commands based upon the Device Selected
-        private void Device1_CheckedChanged(object sender, EventArgs e)
+        private void localLoop_CheckedChanged(object sender, EventArgs e)
         {
             Command.Items.Clear();
             Command.Items.Add("Please Select a Command");
-            Command.Items.Add("Device 1 Command A");
-            Command.Items.Add("Device 1 Command B");
+            Command.Items.Add("Locally Record Audio");
+            Command.Items.Add("Locally Play Audio");
             Command.Text = "Please Select a Command";
         }
 
-        private void Device2_CheckedChanged(object sender, EventArgs e)
+        private void LED_CheckedChanged(object sender, EventArgs e)
         {
             Command.Items.Clear();
             Command.Items.Add("Please Select a Command");
-            Command.Items.Add("Device 2 Command A");
-            Command.Items.Add("Device 2 Command B");
+            Command.Items.Add("Turn On LED");
+            Command.Items.Add("Turn Off LED");
+            Command.Items.Add("Toggle LED");
             Command.Text = "Please Select a Command";
         }
 
-        private void Device3_CheckedChanged(object sender, EventArgs e)
+        private void Buzzer_CheckedChanged(object sender, EventArgs e)
         {
             Command.Items.Clear();
             Command.Items.Add("Please Select a Command");
-            Command.Items.Add("Device 3 Command A");
-            Command.Items.Add("Device 3 Command B");
+            Command.Items.Add("Turn On Buzzer");
+            Command.Items.Add("Turn Off Buzzer");
+            Command.Items.Add("Toggle Buzzer");
             Command.Text = "Please Select a Command";
         }
-        private void Device4_CheckedChanged(object sender, EventArgs e)
+        private void Microphone_CheckedChanged(object sender, EventArgs e)
         {
             Command.Items.Clear();
             Command.Items.Add("Please Select a Command");
-            Command.Items.Add("Device 4 Command A");
-            Command.Items.Add("Device 4 Command B");
+            Command.Items.Add("Remotely Record Audio");
+            Command.Items.Add("Remotely Play Audio");
             Command.Text = "Please Select a Command";
         }
         // Main chuck of the program, 
@@ -122,48 +144,73 @@ namespace ECE_501_Front_End
         // Not very scalable however, find way to make more scalable
         private void Send_Click(object sender, EventArgs e)
         {
+           string serverIP = ipAddressBox.Text;
+            int port = 5000;
+            TcpClient client = new TcpClient(serverIP, port);
+            NetworkStream nwStream = client.GetStream();
+            byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
+
+             
+
             switch (Command.Text)
             {
-                case "Device 1 Command A":
+                case "Locally Record Audio":
                     {
-                        writeOutput("1");
-                        worker.RunWorkerAsync();
+                        localRecord();
                         Send.Enabled = false;
                         break;
                     }
-                case "Device 1 Command B":
+                case "Locally Play Audio":
                     {
-                        writeOutput("2");
+                        localPlay();
                         break;
                     }
-                case "Device 2 Command A":
+                case "Turn On LED":
                     {
-                        writeOutput("3");
+                        writeOutput("Sending: " + Command.Text);
+                        nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
-                case "Device 2 Command B":
+                case "Turn Off LED":
                     {
-                        writeOutput("4");
+                        writeOutput("Sending: " + Command.Text);
+                        nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
-                case "Device 3 Command A":
+                case "Toggle LED":
                     {
-                        writeOutput("5");
+                        writeOutput("Sending: " + Command.Text);
+                        nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
-                case "Device 3 Command B":
+                case "Turn On Buzzer":
                     {
-                        writeOutput("6");
+                        writeOutput("Sending: " + Command.Text);
+                        nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
-                case "Device 4 Command A":
+                case "Turn Off Buzzer":
                     {
-                        writeOutput("7");
+                        writeOutput("Sending: " + Command.Text);
+                        nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
-                case "Device 4 Command B":
+                case "Toggle Buzzer":
                     {
-                        writeOutput("8");
+                        writeOutput("Sending: " + Command.Text);
+                        nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+                        break;
+                    }
+                case "Remotely Record Audio":
+                    {
+                        writeOutput("Sending: " + Command.Text);
+                        nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+                        break;
+                    }
+                case "Remotely Play Audio":
+                    {
+                        writeOutput("Sending: " + Command.Text);
+                        nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
 
