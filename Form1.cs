@@ -145,7 +145,7 @@ namespace ECE_501_Front_End
         private void Send_Click(object sender, EventArgs e)
         {
            string serverIP = ipAddressBox.Text;
-            int port = 5000;
+            int port = 65432;
             TcpClient client = new TcpClient(serverIP, port);
             NetworkStream nwStream = client.GetStream();
             byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
@@ -167,49 +167,49 @@ namespace ECE_501_Front_End
                     }
                 case "Turn On LED":
                     {
-                        writeOutput("Sending: " + Command.Text);
+                        writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
                 case "Turn Off LED":
                     {
-                        writeOutput("Sending: " + Command.Text);
+                        writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
                 case "Toggle LED":
                     {
-                        writeOutput("Sending: " + Command.Text);
+                        writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
                 case "Turn On Buzzer":
                     {
-                        writeOutput("Sending: " + Command.Text);
+                        writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
                 case "Turn Off Buzzer":
                     {
-                        writeOutput("Sending: " + Command.Text);
+                        writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
                 case "Toggle Buzzer":
                     {
-                        writeOutput("Sending: " + Command.Text);
+                        writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
                 case "Remotely Record Audio":
                     {
-                        writeOutput("Sending: " + Command.Text);
+                        writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
                 case "Remotely Play Audio":
                     {
-                        writeOutput("Sending: " + Command.Text);
+                        writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
@@ -219,7 +219,6 @@ namespace ECE_501_Front_End
                         writeOutput("Please Select a Device and Command\n");
                         break;
                     }
-
 
             }    
         }
