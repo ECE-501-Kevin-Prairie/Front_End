@@ -25,6 +25,9 @@ namespace ECE_501_Front_End
         [DllImport("winmm.dll", EntryPoint = "mciSendStringA", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
         private static extern int mciSendString(string lpstrCommand, string lpstrReturnString, int uReturnLength, int hwndCallback);
 
+        TcpClient client = new TcpClient();
+        int port = 65432;
+
         public Form1()
         {
             InitializeComponent();
@@ -42,15 +45,11 @@ namespace ECE_501_Front_End
         {
             mciSendString("open new Type waveaudio Alias recsound", "", 0, 0);
             mciSendString("record recsound", "", 0, 0);
-            Console.WriteLine("Recording, press Enter to stop and save ...");
-            Console.ReadLine();
-
-            mciSendString("save recsound C:/result.wav", "", 0, 0);
-            mciSendString("close recsound ", "", 0, 0);
+            writeOutput("Recording...\nClick in the Output Box and Press Space to stop and save...\n");
         }
         public void localPlay()
         {
-            System.Media.SoundPlayer player = new System.Media.SoundPlayer("C:\\result.wav");
+            System.Media.SoundPlayer player = new System.Media.SoundPlayer("C:\\Users\\Kevin\\Documents\\result.wav");
             player.PlaySync();
         }
         private void Form1_Load(object sender, EventArgs e)
@@ -135,8 +134,8 @@ namespace ECE_501_Front_End
         {
             Command.Items.Clear();
             Command.Items.Add("Please Select a Command");
-            Command.Items.Add("Remotely Record Audio");
-            Command.Items.Add("Remotely Play Audio");
+            Command.Items.Add("Record Audio");
+            Command.Items.Add("Play Audio");
             Command.Text = "Please Select a Command";
         }
         // Main chuck of the program, 
@@ -144,13 +143,6 @@ namespace ECE_501_Front_End
         // Not very scalable however, find way to make more scalable
         private void Send_Click(object sender, EventArgs e)
         {
-           string serverIP = ipAddressBox.Text;
-            int port = 65432;
-            TcpClient client = new TcpClient(serverIP, port);
-            NetworkStream nwStream = client.GetStream();
-            byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
-
-             
 
             switch (Command.Text)
             {
@@ -162,53 +154,70 @@ namespace ECE_501_Front_End
                     }
                 case "Locally Play Audio":
                     {
+                        writeOutput("Playing Previously Recorded sound...\n\n");
                         localPlay();
                         break;
                     }
                 case "Turn On LED":
                     {
+                        NetworkStream nwStream = client.GetStream();
+                        byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
                 case "Turn Off LED":
                     {
+                        NetworkStream nwStream = client.GetStream();
+                        byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
                 case "Toggle LED":
                     {
+                        NetworkStream nwStream = client.GetStream();
+                        byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
                 case "Turn On Buzzer":
                     {
+                        NetworkStream nwStream = client.GetStream();
+                        byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
                 case "Turn Off Buzzer":
                     {
+                        NetworkStream nwStream = client.GetStream();
+                        byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
                 case "Toggle Buzzer":
                     {
+                        NetworkStream nwStream = client.GetStream();
+                        byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
-                case "Remotely Record Audio":
+                case "Record Audio":
                     {
+                        NetworkStream nwStream = client.GetStream();
+                        byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
                     }
-                case "Remotely Play Audio":
+                case "Play Audio":
                     {
+                        NetworkStream nwStream = client.GetStream();
+                        byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         break;
@@ -282,6 +291,72 @@ namespace ECE_501_Front_End
             outputBox.AppendText(data);
             outputBox.SelectionStart = outputBox.Text.Length;
             outputBox.ScrollToCaret();
+        }
+
+        private void connectButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                client.Connect(ipAddressBox.Text, port);
+                connectivityBox.Text = "Connected!";
+                connectivityBox.BackColor = Color.LightGreen;
+            }
+            catch 
+            {
+                connectivityBox.Text = "Can't Connect";
+                connectivityBox.BackColor = Color.Red;
+            }
+        }
+
+        private void disconnectButton_Click(object sender, EventArgs e)
+        {
+            client.Close();
+        }
+
+        private void outputBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            writeOutput("Recording Saved to C:\\Users\\Kevin\\Documents\\result.wav\n\n");
+            mciSendString("save recsound C:\\Users\\Documents\\result.wav", "", 0, 0);
+            mciSendString("close recsound ", "", 0, 0);
+            Send.Enabled = true;
+        }
+        public void ReadFile(NetworkStream ns)
+        {
+            var header = new byte[4];
+            var bytesLeft = 4;
+            var offset = 0;
+
+            // have to repeat as messages can come in chunks
+            while (bytesLeft > 0)
+            {
+                var bytesRead = ns.Read(header, offset, bytesLeft);
+                offset += bytesRead;
+                bytesLeft -= bytesRead;
+            }
+
+            bytesLeft = BitConverter.ToInt32(header, 0);
+            offset = 0;
+            var fileContents = new byte[bytesLeft];
+
+            // have to repeat as messages can come in chunks
+            while (bytesLeft > 0)
+            {
+                var bytesRead = ns.Read(fileContents, offset, bytesLeft);
+                offset += bytesRead;
+                bytesLeft -= bytesRead;
+            }
+
+            try
+            {
+                using (var fs = new FileStream("remote.wav", FileMode.Create, FileAccess.Write))
+                {
+                    fs.Write(fileContents, 0, fileContents.Length);
+                }
+            }
+            catch (Exception ex)
+            {
+                writeOutput("Exception caught in process: " + ex.ToString());
+            }
         }
     }
 }

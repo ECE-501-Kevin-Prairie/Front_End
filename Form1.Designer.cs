@@ -47,6 +47,8 @@ namespace ECE_501_Front_End
             this.ipAddressLabel = new System.Windows.Forms.Label();
             this.umassLogo = new System.Windows.Forms.PictureBox();
             this.Save = new System.Windows.Forms.Button();
+            this.connectButton = new System.Windows.Forms.Button();
+            this.disconnectButton = new System.Windows.Forms.Button();
             this.deviceGroupBox.SuspendLayout();
             this.commandsGroupBox.SuspendLayout();
             this.connectivityGroupBox.SuspendLayout();
@@ -153,6 +155,7 @@ namespace ECE_501_Front_End
             this.outputBox.Size = new System.Drawing.Size(425, 352);
             this.outputBox.TabIndex = 7;
             this.outputBox.Text = "";
+            this.outputBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.outputBox_KeyPress);
             // 
             // Send
             // 
@@ -196,6 +199,8 @@ namespace ECE_501_Front_End
             // 
             // connectivityGroupBox
             // 
+            this.connectivityGroupBox.Controls.Add(this.disconnectButton);
+            this.connectivityGroupBox.Controls.Add(this.connectButton);
             this.connectivityGroupBox.Controls.Add(this.ipAddressBox);
             this.connectivityGroupBox.Controls.Add(this.connectivityBox);
             this.connectivityGroupBox.Controls.Add(this.Ping);
@@ -235,10 +240,11 @@ namespace ECE_501_Front_End
             // 
             // Ping
             // 
+            this.Ping.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Ping.Location = new System.Drawing.Point(8, 73);
             this.Ping.Margin = new System.Windows.Forms.Padding(4);
             this.Ping.Name = "Ping";
-            this.Ping.Size = new System.Drawing.Size(256, 62);
+            this.Ping.Size = new System.Drawing.Size(78, 62);
             this.Ping.TabIndex = 2;
             this.Ping.Text = "Ping";
             this.Ping.UseVisualStyleBackColor = true;
@@ -278,6 +284,30 @@ namespace ECE_501_Front_End
             this.Save.UseVisualStyleBackColor = false;
             this.Save.Click += new System.EventHandler(this.Save_Click);
             // 
+            // connectButton
+            // 
+            this.connectButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.connectButton.Location = new System.Drawing.Point(90, 73);
+            this.connectButton.Margin = new System.Windows.Forms.Padding(4);
+            this.connectButton.Name = "connectButton";
+            this.connectButton.Size = new System.Drawing.Size(86, 62);
+            this.connectButton.TabIndex = 6;
+            this.connectButton.Text = "Connect";
+            this.connectButton.UseVisualStyleBackColor = true;
+            this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
+            // 
+            // disconnectButton
+            // 
+            this.disconnectButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.disconnectButton.Location = new System.Drawing.Point(179, 73);
+            this.disconnectButton.Margin = new System.Windows.Forms.Padding(4);
+            this.disconnectButton.Name = "disconnectButton";
+            this.disconnectButton.Size = new System.Drawing.Size(84, 62);
+            this.disconnectButton.TabIndex = 7;
+            this.disconnectButton.Text = "Disconnect";
+            this.disconnectButton.UseVisualStyleBackColor = true;
+            this.disconnectButton.Click += new System.EventHandler(this.disconnectButton_Click);
+            // 
             // Form1
             // 
             this.AcceptButton = this.Send;
@@ -299,7 +329,7 @@ namespace ECE_501_Front_End
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
-            this.Text = " ccf";
+            this.Text = "IoT Framework";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.deviceGroupBox.ResumeLayout(false);
             this.deviceGroupBox.PerformLayout();
@@ -330,6 +360,8 @@ namespace ECE_501_Front_End
         private System.Windows.Forms.TextBox connectivityBox;
         private System.Windows.Forms.TextBox ipAddressBox;
         private System.Windows.Forms.Button Save;
+        private System.Windows.Forms.Button disconnectButton;
+        private System.Windows.Forms.Button connectButton;
     }
 }
 
