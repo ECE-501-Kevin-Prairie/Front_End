@@ -356,52 +356,33 @@ namespace ECE_501_Front_End
 
         public void ReadFile(NetworkStream ns)
         {
-            var header = new byte[4];
-            var bytesLeft = 4;
-            var offset = 0;
-
-            // have to repeat as messages can come in chunks
-            while (bytesLeft > 0)
+            Int64 bytesReceived = 0;
+            int count;
+            var buffer = new byte[1024 * 8];
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            string audioPath = "";
+            fbd.Description = "Choose Location of output.wav";
+            if (fbd.ShowDialog() == DialogResult.OK)
             {
-                var bytesRead = ns.Read(header, offset, bytesLeft);
-                offset += bytesRead;
-                bytesLeft -= bytesRead;
+                audioPath = fbd.SelectedPath + "\\output.wav";
             }
-
-            bytesLeft = BitConverter.ToInt32(header, 0);
-            offset = 0;
-            var fileContents = new byte[bytesLeft];
-
-            // have to repeat as messages can come in chunks
-            while (bytesLeft > 0)
+            else
             {
-                var bytesRead = ns.Read(fileContents, offset, bytesLeft);
-                offset += bytesRead;
-                bytesLeft -= bytesRead;
+                return;
             }
+            // Read length - Int64
+            ns.Read(buffer, 0, 8);
+            Int64 numberOfBytes = BitConverter.ToInt64(buffer, 0);
 
-            try
-            {
-                FolderBrowserDialog fbd = new FolderBrowserDialog();
-                string audioPath = "";
-                fbd.Description = "Choose Location of result.wav";
-                if (fbd.ShowDialog() == DialogResult.OK)
+            using (var fileIO = File.Create(audioPath))
+                while (bytesReceived < numberOfBytes && (count = ns.Read(buffer, 0, buffer.Length)) > 0)
                 {
-                    audioPath = fbd.SelectedPath + "\\result.wav";
+                    fileIO.Write(buffer, 0, count);
+                    bytesReceived += count;
                 }
-                else
-                {
-                    return;
-                }
-                using (var fs = new FileStream(audioPath, FileMode.Create, FileAccess.Write))
-                {
-                    fs.Write(fileContents, 0, fileContents.Length);
-                }
-            }
-            catch (Exception ex)
-            {
-                writeOutput("Exception caught in process: " + ex.ToString());
-            }
+
+            System.Media.SoundPlayer player = new System.Media.SoundPlayer(audioPath);
+            player.PlaySync();
         }
     }
 }
