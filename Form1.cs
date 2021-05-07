@@ -62,7 +62,7 @@ namespace ECE_501_Front_End
                 writeOutput("No file was selected...\n\n");
                 return;
             }
-            System.Media.SoundPlayer player = new System.Media.SoundPlayer(audioPath);
+            SoundPlayer player = new SoundPlayer(audioPath);
             player.PlaySync();
         }
         private void Form1_Load(object sender, EventArgs e)
@@ -234,8 +234,6 @@ namespace ECE_501_Front_End
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                         ReadFile(nwStream);
-                        System.Media.SoundPlayer player = new System.Media.SoundPlayer("C:\\Users\\Kevin\\Documents\\remote.wav");
-                        player.PlaySync();
                         break;
                     }
 
@@ -381,7 +379,7 @@ namespace ECE_501_Front_End
                     bytesReceived += count;
                 }
 
-            System.Media.SoundPlayer player = new System.Media.SoundPlayer(audioPath);
+            SoundPlayer player = new SoundPlayer(audioPath);
             player.PlaySync();
         }
     }
