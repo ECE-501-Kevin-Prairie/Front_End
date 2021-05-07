@@ -331,6 +331,8 @@ namespace ECE_501_Front_End
         private void disconnectButton_Click(object sender, EventArgs e)
         {
             client.Close();
+            connectivityBox.Text = "Disconnected!";
+            connectivityBox.BackColor = Color.Red;
         }
 
         private void outputBox_KeyPress(object sender, KeyPressEventArgs e)
