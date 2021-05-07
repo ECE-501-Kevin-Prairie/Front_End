@@ -25,7 +25,7 @@ namespace ECE_501_Front_End
         [DllImport("winmm.dll", EntryPoint = "mciSendStringA", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
         private static extern int mciSendString(string lpstrCommand, string lpstrReturnString, int uReturnLength, int hwndCallback);
 
-        TcpClient client = new TcpClient();
+        TcpClient tcpClient = new TcpClient();
         int port = 65432;
 
         public Form1()
@@ -39,6 +39,15 @@ namespace ECE_501_Front_End
             worker.ProgressChanged += worker_ProgressChanged;
             worker.RunWorkerCompleted += worker_RunWorkerCompleted;
             worker.WorkerSupportsCancellation = true;
+            
+            if(!tcpClient.Connected)
+            {
+                LED.Enabled = false;
+                Buzzer.Enabled = false;
+                Microphone.Enabled = false;
+                disconnectButton.Enabled = false;
+                localLoop.Checked = true;
+            }
 
         }
         public void localRecord()
@@ -173,7 +182,7 @@ namespace ECE_501_Front_End
                     }
                 case "Turn On LED":
                     {
-                        NetworkStream nwStream = client.GetStream();
+                        NetworkStream nwStream = tcpClient.GetStream();
                         byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
@@ -181,7 +190,7 @@ namespace ECE_501_Front_End
                     }
                 case "Turn Off LED":
                     {
-                        NetworkStream nwStream = client.GetStream();
+                        NetworkStream nwStream = tcpClient.GetStream();
                         byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
@@ -189,7 +198,7 @@ namespace ECE_501_Front_End
                     }
                 case "Toggle LED":
                     {
-                        NetworkStream nwStream = client.GetStream();
+                        NetworkStream nwStream = tcpClient.GetStream();
                         byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
@@ -197,7 +206,7 @@ namespace ECE_501_Front_End
                     }
                 case "Turn On Buzzer":
                     {
-                        NetworkStream nwStream = client.GetStream();
+                        NetworkStream nwStream = tcpClient.GetStream();
                         byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
@@ -205,7 +214,7 @@ namespace ECE_501_Front_End
                     }
                 case "Turn Off Buzzer":
                     {
-                        NetworkStream nwStream = client.GetStream();
+                        NetworkStream nwStream = tcpClient.GetStream();
                         byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
@@ -213,7 +222,7 @@ namespace ECE_501_Front_End
                     }
                 case "Toggle Buzzer":
                     {
-                        NetworkStream nwStream = client.GetStream();
+                        NetworkStream nwStream = tcpClient.GetStream();
                         byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
@@ -221,7 +230,7 @@ namespace ECE_501_Front_End
                     }
                 case "Record Audio":
                     {
-                        NetworkStream nwStream = client.GetStream();
+                        NetworkStream nwStream = tcpClient.GetStream();
                         byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
@@ -229,7 +238,7 @@ namespace ECE_501_Front_End
                     }
                 case "Play Audio":
                     {
-                        NetworkStream nwStream = client.GetStream();
+                        NetworkStream nwStream = tcpClient.GetStream();
                         byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
@@ -311,13 +320,19 @@ namespace ECE_501_Front_End
             outputBox.ScrollToCaret();
         }
 
-        private void connectButton_Click(object sender, EventArgs e)
+        public void  connectButton_Click(object sender, EventArgs e)
         {
+            tcpClient = new TcpClient();
             try
             {
-                client.Connect(ipAddressBox.Text, port);
+                tcpClient.Connect(ipAddressBox.Text, port);
                 connectivityBox.Text = "Connected!";
                 connectivityBox.BackColor = Color.LightGreen;
+                LED.Enabled = true;
+                Buzzer.Enabled = true;
+                Microphone.Enabled = true;
+                disconnectButton.Enabled = true;
+                connectButton.Enabled = false;
             }
             catch 
             {
@@ -328,9 +343,18 @@ namespace ECE_501_Front_End
 
         private void disconnectButton_Click(object sender, EventArgs e)
         {
-            client.Close();
+            tcpClient.Close();
             connectivityBox.Text = "Disconnected!";
             connectivityBox.BackColor = Color.Red;
+            if (!tcpClient.Connected)
+            {
+                LED.Enabled = false;
+                Buzzer.Enabled = false;
+                Microphone.Enabled = false;
+                disconnectButton.Enabled = false;
+                connectButton.Enabled = true;
+                localLoop.Checked = true;
+            }
         }
 
         private void outputBox_KeyPress(object sender, KeyPressEventArgs e)
