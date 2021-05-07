@@ -49,7 +49,20 @@ namespace ECE_501_Front_End
         }
         public void localPlay()
         {
-            System.Media.SoundPlayer player = new System.Media.SoundPlayer("C:\\Users\\Kevin\\Documents\\result.wav");
+            OpenFileDialog ofd = new OpenFileDialog();
+            string audioPath = "";
+            ofd.Title = "Select result.wav";
+            ofd.Filter = "Wav files (result.wav)|result.wav";
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                audioPath = ofd.FileName;
+            }
+            else
+            {
+                writeOutput("No file was selected...\n\n");
+                return;
+            }
+            System.Media.SoundPlayer player = new System.Media.SoundPlayer(audioPath);
             player.PlaySync();
         }
         private void Form1_Load(object sender, EventArgs e)
@@ -220,6 +233,9 @@ namespace ECE_501_Front_End
                         byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(Command.Text);
                         writeOutput("Sending: " + Command.Text + "\n");
                         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+                        ReadFile(nwStream);
+                        System.Media.SoundPlayer player = new System.Media.SoundPlayer("C:\\Users\\Kevin\\Documents\\remote.wav");
+                        player.PlaySync();
                         break;
                     }
 
@@ -276,6 +292,10 @@ namespace ECE_501_Front_End
             {
                  logPath = fbd.SelectedPath + "\\UMD.txt";
             }
+            else
+            {
+                return;
+            }
             TextWriter log = new StreamWriter(logPath);
             log.Write(outputBox.Text);
             log.Close();
@@ -315,11 +335,23 @@ namespace ECE_501_Front_End
 
         private void outputBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            writeOutput("Recording Saved to C:\\Users\\Kevin\\Documents\\result.wav\n\n");
-            mciSendString("save recsound C:\\Users\\Documents\\result.wav", "", 0, 0);
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            string audioPath = "";
+            fbd.Description = "Choose Location of result.wav";
+            if (fbd.ShowDialog() == DialogResult.OK)
+            {
+                audioPath = fbd.SelectedPath + "\\result.wav";
+            }
+            else
+            {
+                return;
+            }
+            writeOutput("Recording Saved to: " + audioPath + "\n\n");
+            mciSendString("save recsound " + audioPath, "", 0, 0);
             mciSendString("close recsound ", "", 0, 0);
             Send.Enabled = true;
         }
+
         public void ReadFile(NetworkStream ns)
         {
             var header = new byte[4];
@@ -348,7 +380,18 @@ namespace ECE_501_Front_End
 
             try
             {
-                using (var fs = new FileStream("remote.wav", FileMode.Create, FileAccess.Write))
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
+                string audioPath = "";
+                fbd.Description = "Choose Location of result.wav";
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+                    audioPath = fbd.SelectedPath + "\\result.wav";
+                }
+                else
+                {
+                    return;
+                }
+                using (var fs = new FileStream(audioPath, FileMode.Create, FileAccess.Write))
                 {
                     fs.Write(fileContents, 0, fileContents.Length);
                 }

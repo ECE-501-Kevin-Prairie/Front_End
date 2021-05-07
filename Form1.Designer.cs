@@ -41,14 +41,14 @@ namespace ECE_501_Front_End
             this.Clear = new System.Windows.Forms.Button();
             this.commandsGroupBox = new System.Windows.Forms.GroupBox();
             this.connectivityGroupBox = new System.Windows.Forms.GroupBox();
+            this.disconnectButton = new System.Windows.Forms.Button();
+            this.connectButton = new System.Windows.Forms.Button();
             this.ipAddressBox = new System.Windows.Forms.TextBox();
             this.connectivityBox = new System.Windows.Forms.TextBox();
             this.Ping = new System.Windows.Forms.Button();
             this.ipAddressLabel = new System.Windows.Forms.Label();
             this.umassLogo = new System.Windows.Forms.PictureBox();
             this.Save = new System.Windows.Forms.Button();
-            this.connectButton = new System.Windows.Forms.Button();
-            this.disconnectButton = new System.Windows.Forms.Button();
             this.deviceGroupBox.SuspendLayout();
             this.commandsGroupBox.SuspendLayout();
             this.connectivityGroupBox.SuspendLayout();
@@ -215,6 +215,30 @@ namespace ECE_501_Front_End
             this.connectivityGroupBox.TabStop = false;
             this.connectivityGroupBox.Text = "Check Connectivity";
             // 
+            // disconnectButton
+            // 
+            this.disconnectButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.disconnectButton.Location = new System.Drawing.Point(179, 73);
+            this.disconnectButton.Margin = new System.Windows.Forms.Padding(4);
+            this.disconnectButton.Name = "disconnectButton";
+            this.disconnectButton.Size = new System.Drawing.Size(84, 62);
+            this.disconnectButton.TabIndex = 7;
+            this.disconnectButton.Text = "Disconnect";
+            this.disconnectButton.UseVisualStyleBackColor = true;
+            this.disconnectButton.Click += new System.EventHandler(this.disconnectButton_Click);
+            // 
+            // connectButton
+            // 
+            this.connectButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.connectButton.Location = new System.Drawing.Point(90, 73);
+            this.connectButton.Margin = new System.Windows.Forms.Padding(4);
+            this.connectButton.Name = "connectButton";
+            this.connectButton.Size = new System.Drawing.Size(86, 62);
+            this.connectButton.TabIndex = 6;
+            this.connectButton.Text = "Connect";
+            this.connectButton.UseVisualStyleBackColor = true;
+            this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
+            // 
             // ipAddressBox
             // 
             this.ipAddressBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -283,30 +307,6 @@ namespace ECE_501_Front_End
             this.Save.Text = "Save Log";
             this.Save.UseVisualStyleBackColor = false;
             this.Save.Click += new System.EventHandler(this.Save_Click);
-            // 
-            // connectButton
-            // 
-            this.connectButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.connectButton.Location = new System.Drawing.Point(90, 73);
-            this.connectButton.Margin = new System.Windows.Forms.Padding(4);
-            this.connectButton.Name = "connectButton";
-            this.connectButton.Size = new System.Drawing.Size(86, 62);
-            this.connectButton.TabIndex = 6;
-            this.connectButton.Text = "Connect";
-            this.connectButton.UseVisualStyleBackColor = true;
-            this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
-            // 
-            // disconnectButton
-            // 
-            this.disconnectButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.disconnectButton.Location = new System.Drawing.Point(179, 73);
-            this.disconnectButton.Margin = new System.Windows.Forms.Padding(4);
-            this.disconnectButton.Name = "disconnectButton";
-            this.disconnectButton.Size = new System.Drawing.Size(84, 62);
-            this.disconnectButton.TabIndex = 7;
-            this.disconnectButton.Text = "Disconnect";
-            this.disconnectButton.UseVisualStyleBackColor = true;
-            this.disconnectButton.Click += new System.EventHandler(this.disconnectButton_Click);
             // 
             // Form1
             // 
